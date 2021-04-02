@@ -3,10 +3,29 @@ import math
 import numpy as np
 
 
-def func1(x3, x2, x1, k, a, b, n):
-    answer = 'По методу центральных прямоугольников ' + rect_mid(x3, x2, x1, k, a, b, eps, n)
-    answer += 'По методу левых прямоугольников ' + rect_left(x3, x2, x1, k, a, b, eps, n)
-    answer += 'По методу правых прямоугольников ' + rect_right(x3, x2, x1, k, a, b, eps, n)
+def func1(x3, x2, x1, k, a, b, eps, n):
+    sum_rect_mid = rect_mid(x3, x2, x1, k, a, b, n)
+    sum_rect_left = rect_left(x3, x2, x1, k, a, b, n)
+    sum_rect_right = rect_right(x3, x2, x1, k, a, b, n)
+    n *= 2
+    sum_rect_mid1 = rect_mid(x3, x2, x1, k, a, b, n)
+    sum_rect_left1 = rect_left(x3, x2, x1, k, a, b, n)
+    sum_rect_right1 = rect_right(x3, x2, x1, k, a, b, n)
+    while (abs(sum_rect_mid1 - sum_rect_mid) > eps and abs(sum_rect_left1 - sum_rect_left) > eps
+           and abs(sum_rect_right1 - sum_rect_right) > eps):
+        sum_rect_mid = sum_rect_mid1
+        sum_rect_left = sum_rect_left1
+        sum_rect_right = sum_rect_right1
+        n *= 2
+        sum_rect_mid1 = rect_mid(x3, x2, x1, k, a, b, n)
+        sum_rect_left1 = rect_left(x3, x2, x1, k, a, b, n)
+        sum_rect_right1 = rect_right(x3, x2, x1, k, a, b, n)
+    answer = 'По методу центральных прямоугольников ответ: ' + str(
+        rect_mid(x3, x2, x1, k, a, b, n)) + '. Получен за ' + str(int(n / 2)) + ' шагов.\n'
+    answer += 'По методу левых прямоугольников ' + str(rect_left(x3, x2, x1, k, a, b, n)) + '. Получен за ' + str(
+        int(n / 2)) + ' шагов.\n'
+    answer += 'По методу правых прямоугольников ' + str(rect_right(x3, x2, x1, k, a, b, n)) + '. Получен за ' + str(
+        int(n / 2)) + ' шагов.\n'
     return answer
 
 
@@ -17,7 +36,7 @@ def rect_mid(x3, x2, x1, k, a, b, n):
         summa += f(a + step / 2, x3, x2, x1, k)
         a += step
     summa *= step
-    return 'ответ: ' + str(summa) + '. Решено за ' + str(n) + ' шага' + '\n'
+    return summa
 
 
 def rect_left(x3, x2, x1, k, a, b, n):
@@ -27,7 +46,7 @@ def rect_left(x3, x2, x1, k, a, b, n):
         summa += f(a, x3, x2, x1, k)
         a += step
     summa *= step
-    return 'ответ: ' + str(summa) + '. Решено за ' + str(n) + ' шага' + '\n'
+    return summa
 
 
 def rect_right(x3, x2, x1, k, a, b, n):
@@ -38,10 +57,21 @@ def rect_right(x3, x2, x1, k, a, b, n):
         summa += f(a, x3, x2, x1, k)
         a += step
     summa *= step
-    return 'ответ: ' + str(summa) + '. Решено за ' + str(n) + ' шага' + '\n'
+    return summa
 
 
-def func2(x3, x2, x1, k, a, b, n):
+def func2(x3, x2, x1, k, a, b, eps, n):
+    sum = func2_realisation(x3, x2, x1, k, a, b, n)
+    n *= 2
+    n_sum = func2_realisation(x3, x2, x1, k, a, b, n)
+    while (abs(n_sum - sum) > eps):
+        sum = n_sum
+        n *= 2
+        n_sum = func2_realisation(x3, x2, x1, k, a, b, n)
+    return 'По методу трапеций ответ: ' + str(sum) + '. Решено за ' + str(int(n / 2)) + ' шага.'
+
+
+def func2_realisation(x3, x2, x1, k, a, b, n):
     step = (b - a) / n
     sum = 0
     for i in range(0, n):
@@ -49,10 +79,21 @@ def func2(x3, x2, x1, k, a, b, n):
         a += step
         yn = f(a, x3, x2, x1, k)
         sum += step * (y0 + yn) / 2
-    return 'По методу трапеций ответ: ' + str(sum) + '. Решено за ' + str(n) + ' шага.'
+    return sum
 
 
-def func3(x3, x2, x1, k, a, b, n):
+def func3(x3, x2, x1, k, a, b, eps, n):
+    sum = func3_realisation(x3, x2, x1, k, a, b, n)
+    n *= 2
+    n_sum = func3_realisation(x3, x2, x1, k, a, b, n)
+    while (abs(n_sum - sum) > eps):
+        sum = n_sum
+        n *= 2
+        n_sum = func3_realisation(x3, x2, x1, k, a, b, n)
+    return 'Ответ: ' + str(sum) + '. Решено за ' + str(int(n / 2)) + ' шага.'
+
+
+def func3_realisation(x3, x2, x1, k, a, b, n):
     step = (b - a) / n
     x0 = f(a, x3, x2, x1, k)
     a += step
@@ -66,7 +107,7 @@ def func3(x3, x2, x1, k, a, b, n):
             sum_1 += f(a, x3, x2, x1, k)
         a += step
     answer = step * (x0 + xn + 2 * sum_2 + 4 * sum_1) / 3
-    return 'Ответ: ' + str(answer) + '. Решено за ' + str(n) + ' шага.'
+    return answer
 
 
 def f(x, x3, x2, x1, k):
@@ -101,7 +142,7 @@ if __name__ == '__main__':
                 x3, x2, x1, k = map(float, pathh.readline().split(' '))
                 a, b = map(float, pathh.readline().split(' '))
                 eps = float(pathh.readline())
-                #n = int(pathh.readline())
+                # n = int(pathh.readline())
 
                 answerGiven = True
                 scannerline = False
@@ -122,8 +163,8 @@ if __name__ == '__main__':
             b = float(input())
             print('Погрешность: ')
             eps = float(input())
-            #print('Начальное число разбиения')
-            #n = int(input())
+            # print('Начальное число разбиения')
+            # n = int(input())
             answerGiven = True
             scannerline = False
 
@@ -138,17 +179,17 @@ if __name__ == '__main__':
         give = input()
         if give == '1':
             printGraph(a, b)
-            n = max(round(math.sqrt(max_f2(x3,x2,a,b)*(b-a)**3/(24*eps)))+1,n)
-            answer = func1(x3, x2, x1, k, a, b, n)
+            # n = max(round(math.sqrt(max_f2(x3,x2,a,b)*(b-a)**3/(24*eps)))+1,n)
+            answer = func1(x3, x2, x1, k, a, b, eps, n)
             answerGiven = False
         elif give == '2':
             printGraph(a, b)
-            n = max(round(math.sqrt(max_f2(x3,x2,a,b)*(b-a)**3/(12*eps)))+1,n)
-            answer = func2(x3, x2, x1, k, a, b, n)
+            # n = max(round(math.sqrt(max_f2(x3,x2,a,b)*(b-a)**3/(12*eps)))+1,n)
+            answer = func2(x3, x2, x1, k, a, b, eps, n)
             answerGiven = False
         elif give == '3':
             printGraph(a, b)
-            answer = func3(x3, x2, x1, k, a, b, n)
+            answer = func3(x3, x2, x1, k, a, b, eps, n)
             answerGiven = False
         else:
             print('Ошибка: не тот номер \n' +
