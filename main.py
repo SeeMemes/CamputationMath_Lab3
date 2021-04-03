@@ -122,7 +122,9 @@ def printGraph(a, b):
     fig, ax = plt.subplots()
     x = np.linspace(a, b, 1000)
     y = f(x, x3, x2, x1, k)
+    y1 = 0 * x
     ax.plot(x, y)
+    ax.plot(x, y1)
     plt.show()
 
 
@@ -189,6 +191,7 @@ if __name__ == '__main__':
             answerGiven = False
         elif give == '3':
             printGraph(a, b)
+            # n = 4
             answer = func3(x3, x2, x1, k, a, b, eps, n)
             answerGiven = False
         else:
